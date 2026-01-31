@@ -1,22 +1,26 @@
 import os
 import json
+import urllib.request
+import xml.etree.ElementTree as ET
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-# Mengambil data dari GitHub Secrets
+# Ambil data dari Secrets
 json_key_raw = os.environ.get('GOOGLE_JSON_KEY')
 json_key = json.loads(json_key_raw)
 
-# Daftar 6 URL artikel Blogger Anda
-urls = [
-    "https://harahapjaya99.blogspot.com/2025/03/bukan-cuma-bikin-konten-drone-juga-bisa.html",
-    "https://harahapjaya99.blogspot.com/2025/03/menjamur-di-ri-bisnis-ini-punya-omzet.html",
-    "https://harahapjaya99.blogspot.com/2025/03/calon-pemain-naturalisasi-tambahan.html",
-    "https://harahapjaya99.blogspot.com/2026/01/menjelajahi-rahasia-ruang-angkasa.html",
-    "https://harahapjaya99.blogspot.com/2026/01/5-inovasi-teknologi-masa-depan-yang.html",
-    "https://harahapjaya99.blogspot.com/2026/01/rekomendasi-website-review-aplikasi.html",
-    "https://harahapjaya99.blogspot.com/2026/01/strategi-bisnis-digital-2026-cara.html"
-]
+# Mengambil URL secara otomatis dari RSS Feed Blogger Anda
+rss_url = "https://harahapjaya99.blogspot.com/feeds/posts/default"
+response = urllib.request.urlopen(rss_url)
+tree = ET.parse(response)
+root = tree.getroot()
+
+# Mencari semua link artikel di dalam feed secara otomatis
+urls = []
+for entry in root.findall('{http://www.w3.org/2005/Atom}entry'):
+    for link in entry.findall('{http://www.w3.org/2005/Atom}link'):
+        if link.attrib.get('rel') == 'alternate':
+            urls.append(link.attrib.get('href'))
 
 credentials = service_account.Credentials.from_service_account_info(json_key, scopes=['https://www.googleapis.com/auth/indexing'])
 service = build('indexing', 'v3', credentials=credentials)
@@ -24,6 +28,6 @@ service = build('indexing', 'v3', credentials=credentials)
 for url in urls:
     try:
         service.urlNotifications().publish(body={"url": url, "type": "URL_UPDATED"}).execute()
-        print(f"SUKSES: {url}")
+        print(f"SUKSES TERKIRIM: {url}")
     except Exception as e:
         print(f"GAGAL: {url} | Error: {e}")

@@ -14,7 +14,8 @@ urls = [
     "https://harahapjaya99.blogspot.com/2025/03/calon-pemain-naturalisasi-tambahan.html",
     "https://harahapjaya99.blogspot.com/2026/01/menjelajahi-rahasia-ruang-angkasa.html",
     "https://harahapjaya99.blogspot.com/2026/01/5-inovasi-teknologi-masa-depan-yang.html",
-    "https://harahapjaya99.blogspot.com/2026/01/rekomendasi-website-review-aplikasi.html"
+    "https://harahapjaya99.blogspot.com/2026/01/rekomendasi-website-review-aplikasi.html",
+    "https://harahapjaya99.blogspot.com/2026/01/strategi-bisnis-digital-2026-cara.html"
 ]
 
 credentials = service_account.Credentials.from_service_account_info(json_key, scopes=['https://www.googleapis.com/auth/indexing'])

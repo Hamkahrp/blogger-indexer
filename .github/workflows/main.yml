@@ -1,0 +1,19 @@
+name: Blogger Indexer
+on:
+  workflow_dispatch: # Memunculkan tombol jalankan manual
+
+jobs:
+  run-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Lib
+        run: pip install google-api-python-client google-auth
+      - name: Run Script
+        env:
+          GOOGLE_JSON_KEY: ${{ secrets.INDEXING_SERVICE_ACCOUNT_JSON }}
+        run: python index.py
